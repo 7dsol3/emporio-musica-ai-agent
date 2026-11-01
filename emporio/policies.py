@@ -61,6 +61,8 @@ class PolicyBook:
     def __init__(self, data_dir: Path, db_path: Path):
         self.path = data_dir / "políticas_da_loja.pdf"
         self.sha = sha256_file(self.path)
+        if self.sha != "b7527f96896929f4ba929de117651c6717e25b7a3b92b34bc54d5ba32f6156f7":
+            raise ValueError("The policy manual changed. Review English summaries and rule assumptions before serving a new version.")
         self.knowledge = KnowledgeBase(db_path)
         existing = self.knowledge.list_documents()
         if not existing or any(doc.source_sha256 != self.sha for doc in existing):
@@ -76,7 +78,7 @@ class PolicyBook:
                        for i, page in enumerate(reader.pages, 1)])
 
     def search(self, query: str, topic: str | None = None) -> dict:
-        topics = [topic] if topic in CARDS else topics_for(query)
+        topics = list(dict.fromkeys(([topic] if topic in CARDS else []) + topics_for(query)))[:3]
         if not topics:
             return {"kind": "policy", "cards": [], "sources": [], "found": False}
         # English queries are expanded with the manual's Portuguese terminology.

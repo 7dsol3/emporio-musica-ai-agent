@@ -108,6 +108,16 @@ class Tools:
 
     def search_products(self, query="", category_id=None, max_price_brl=None,
                         available_only=True, limit=5) -> dict:
+        # Models/customers may use English category labels against a Portuguese catalog.
+        aliases = [(5, r"\b(?:acoustic guitars?|classical guitars?|violoes|violao)\b"),
+                   (1, r"\b(?:electric guitars?|guitarras?)\b"),
+                   (2, r"\b(?:bass guitars?|baixos?)\b"), (3, r"\b(?:drums?|baterias?)\b"),
+                   (4, r"\b(?:keyboards?|pianos?|teclados?)\b"), (9, r"\bukuleles?\b")]
+        query = normalize(query)
+        for inferred, pattern in aliases:
+            if re.search(pattern, query):
+                category_id = category_id or inferred
+                query = re.sub(pattern, " ", query)
         max_cents = cents(max_price_brl) if max_price_brl is not None else None
         with self.store.connect() as db:
             rows = db.execute("""SELECT p.*, c.name AS category,
@@ -119,7 +129,7 @@ class Tools:
                     if (category_id is None or p["category_id"] == category_id)
                     and (not available_only or p["available"])
                     and (max_cents is None or p["sale_cents"] <= max_cents)
-                    and all(token in normalize(p["name"] + " " + p["description"]) for token in tokens)]
+                    and all(token in set(re.findall(r"[a-z0-9]+", normalize(p["name"] + " " + p["description"]))) for token in tokens)]
         selected.sort(key=lambda p: (p["sale_cents"], p["id"]))
         products = selected[:limit]
         return {"kind": "catalog", "products": products, "total_matches": len(selected),
