@@ -27,7 +27,7 @@ def main():
         ("01-catalog-and-installments", "Catalog search and payment follow-up", [
             "Which acoustic guitars are available for up to BRL 1,000?", "Tell me about the first one.", "Can I pay for it in 12 installments?"]),
         ("02-promotional-price", "Active promotion and nonstacking PIX discount", [
-            "What is the price and availability of Yamaha NCX1 Elétrico Nylon Natural?", "What would the PIX price be?"]),
+            "What is the price and availability of Taylor 110e Dreadnought Natural?", "What would the PIX price be?"]),
         ("03-return-window", "Clarifying actual receipt before applying a return rule", [
             "I want to return my online purchase.", "I received it on 2026-10-27. It is unused in its original packaging with all accessories and manuals."]),
         ("04-private-order", "Verification and cross-customer access control", [
@@ -40,7 +40,7 @@ def main():
         opener = client()
         lines = [f"# {title}", "", "Captured from the running application. These are observed responses, not manually scripted assistant answers.",
                  f"Data fingerprint: `{health['data_fingerprint']}`", "", "Language: English. Receipt-date example uses the case date, 2026-10-31.", ""]
-        receipts = []
+        receipts, observed = [], []
         for turn in turns:
             if isinstance(turn, dict):
                 verified = request(opener, "/api/verify", {"order_id": 8, "email": "anacarol.ferreira@coldmail.com"})
@@ -52,9 +52,29 @@ def main():
                       "Sources: " + ("; ".join(s["label"] for s in result["sources"]) or "No store facts required."), "",
                       f"Planner: `{result['mode']}`. Tool receipts:", "", "```json", json.dumps(result["tools"], ensure_ascii=False, indent=2), "```", ""]
             receipts.append({"mode": result["mode"], "latency_ms": result["latency_ms"], "tools": result["tools"]})
+            observed.append(result)
             print(f"{filename}: {result['mode']} / {result['latency_ms']} ms", flush=True)
+        if filename.startswith("01"):
+            assert observed[0]["results"][0]["products"]
+            assert all(p["sale_cents"] <= 100000 and p["category_id"] == 5 for p in observed[0]["results"][0]["products"])
+            assert len(observed[1]["results"][0]["products"]) == 1
+            assert observed[1]["results"][0]["products"][0]["id"] == 83
+            assert observed[2]["results"][0]["kind"] == "payment" and not observed[2]["results"][0]["allowed"]
+        elif filename.startswith("02"):
+            assert observed[0]["results"][0]["products"][0]["id"] == 94
+            assert observed[1]["results"][0]["total_cents"] == 551908
+        elif filename.startswith("03"):
+            assert observed[0]["results"][0]["status"] == "needs_information"
+            assert observed[1]["results"][0]["days_since_receipt"] == 4
+        elif filename.startswith("04"):
+            assert [r["results"][0]["status"] for r in observed] == ["verification_required", "found", "unavailable"]
+        else:
+            assert "Rua 14 de Maio" in observed[0]["message"] and "09:00-18:00" in observed[0]["message"]
+            assert not observed[1]["tools"] and not observed[2]["tools"]
         (ROOT / "examples" / (filename + ".md")).write_text("\n".join(lines), encoding="utf-8")
         summary["scenarios"].append({"file": filename + ".md", "turns": receipts})
+    summary["status"] = "PASS"
+    summary["scope"] = "Five scripted stateful scenarios, 13 turns; not a general model benchmark."
     (ROOT / "docs" / "live-evaluation.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
 

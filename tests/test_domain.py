@@ -19,7 +19,7 @@ def test_money_rounding(value, expected):
     assert cents(value) == expected
 
 
-@pytest.mark.parametrize("value", ["NaN", "Infinity", "-1"])
+@pytest.mark.parametrize("value", ["NaN", "Infinity", "-1", "1e9999", "not-money"])
 def test_invalid_money_rejected(value):
     with pytest.raises(ValueError):
         cents(value)

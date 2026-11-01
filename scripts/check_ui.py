@@ -50,11 +50,18 @@ def main():
         assert mobile.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
         assert mobile.locator("#new-chat").is_visible()
         mobile.screenshot(path=str(target / "mobile.png"), full_page=True)
+        mobile.locator("#language-select").select_option("pt")
+        mobile.get_by_text("Seu atendimento está pronto").wait_for()
+        assert mobile.locator("html").get_attribute("lang") == "pt-BR"
+        assert mobile.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+        mobile.screenshot(path=str(target / "portuguese.png"), full_page=True)
+        mobile.locator(".prompt").nth(1).click()
+        mobile.get_by_text("R$ 2.199,00", exact=False).wait_for(timeout=60000)
         browser.close()
     assert not errors, errors
     report = {"status": "PASS", "desktop": "1440x1000", "mobile": "375x812", "javascript_errors": errors,
               "checks": ["initial readiness", "catalog-grounded chat", "catalog view", "policy view", "order verification",
-                         "verified order status", "session reset", "no horizontal overflow", "mobile new conversation"]}
+                         "verified order status", "session reset", "no horizontal overflow", "mobile new conversation", "Portuguese interface and answer"]}
     (ROOT / "docs" / "ui-check.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     print(json.dumps(report, indent=2))
 

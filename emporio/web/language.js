@@ -30,7 +30,7 @@ window.EmporioLanguage = (() => {
       '[data-view="catalog"]': "<span>♫</span> Explorar instrumentos", '[data-view="policies"]': "<span>▤</span> Informações da loja",
       ".sidebar-note p": "Uma boa orientação.<br>Música de sobra.", ".sidebar-note small": "Instrumentos para sua primeira nota<br>e tudo o que vem depois.",
       "#about-button": "Sobre esta demonstração <span>↗</span>", "#welcome .eyebrow": '<span class="small-rule"></span> SUA MÚSICA COMEÇA AQUI',
-      ".intro": "Um novo instrumento. Uma dúvida rápida. Uma ajuda com seu pedido.<br>Vamos simplificar.",
+      ".intro": "Um novo instrumento. Uma dúvida rápida. Uma ajuda com seu pedido. <br>Vamos simplificar.",
       ".composer-foot>span": '<span class="mini-dot"></span> Respostas baseadas nos dados da loja', "#export-button": "Exportar conversa ↓",
       "#catalog-view .eyebrow": "A SALA DE INSTRUMENTOS", "#catalog-view h2": "Um som para <em>cada história.</em>",
       "#catalog-view>.muted": "Explore o catálogo fornecido. A equipe confirma a disponibilidade antes da compra.", "#catalog-form .primary": "Buscar",

@@ -33,7 +33,7 @@ def main() -> None:
         print(json.dumps(result, indent=2))
         raise SystemExit(0 if result["valid"] else 1)
     session = agent.store.session()
-    print("Empório da Música by Konaet. /verify, /reset, /quit. Answers are in English.")
+    print("Empório da Música by Konaet. /verify, /reset, /quit. " + ("Respostas em português." if args.language == "pt" else "Answers are in English."))
     while True:
         try:
             text = input("\nYou: ").strip()

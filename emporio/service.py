@@ -8,7 +8,7 @@ from .config import Settings
 from .hours import human_service
 from .i18n import MESSAGES_PT, render_pt
 from .planner import LocalPlanner, ModelPlanner, redact
-from .policies import PolicyBook
+from .policies import PolicyBook, topics_for
 from .renderer import render
 from .storage import Store
 from .tools import Tools
@@ -39,18 +39,27 @@ class AgentService:
             if self.model and plan.calls:
                 try:
                     model_plan = self.model.plan(text, session["context"], session["history"], today)
+                    explicit_tools = {c.name for c in plan.calls} & {"get_product", "get_order", "quote_payment", "quote_shipping", "assess_return"}
+                    if explicit_tools and any(c.name not in explicit_tools for c in model_plan.calls):
+                        raise ValueError("Model plan conflicts with an explicitly resolved customer intent")
                     # The model may plan retrieval, but cannot supply missing customer facts.
                     for model_call in model_plan.calls:
+                        if model_call.name == "search_policies":
+                            expected = set(topics_for(text))
+                            supplied = set(topics_for(model_call.arguments.get("query", "")))
+                            supplied.add(model_call.arguments.get("topic"))
+                            if not expected.issubset(supplied):
+                                raise ValueError("Model dropped an explicit policy topic")
                         if model_call.name == "assess_return":
                             model_call.arguments = dict(session["context"].get("return_facts", {}))
-                        if model_call.name in {"get_order", "quote_payment", "quote_shipping"}:
+                        if model_call.name in {"get_product", "get_order", "quote_payment", "quote_shipping"}:
                             matching = [c for c in plan.calls if c.name == model_call.name]
-                            if not matching or model_call.arguments != self.tools_argument_defaults(matching[0]):
+                            if not any(model_call.arguments == self.tools_argument_defaults(c) for c in matching):
                                 raise ValueError("Model changed an explicit transaction argument")
                     plan = model_plan
                 except Exception:
                     # Never leak provider URLs, keys, raw response bodies or identity details.
-                    plan.mode, plan.fallback_reason = "local_fallback", "Model planning unavailable or invalid; local rules used."
+                    plan.mode, plan.fallback_reason = "local_fallback", "Model planning unavailable, invalid or inconsistent with explicit facts; local rules used."
             results, traces, sources, messages = [], [], [], []
             if plan.message:
                 messages.append(MESSAGES_PT.get(plan.message, plan.message) if locale == "pt" else plan.message)

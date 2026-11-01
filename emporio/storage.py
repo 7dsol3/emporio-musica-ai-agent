@@ -7,14 +7,17 @@ import secrets
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 
 
 def cents(value: str | int | float) -> int:
-    amount = Decimal(str(value))
-    if not amount.is_finite() or amount < 0:
-        raise ValueError("Money must be a finite, nonnegative value")
+    try:
+        amount = Decimal(str(value))
+    except InvalidOperation as exc:
+        raise ValueError("Invalid monetary value") from exc
+    if not amount.is_finite() or amount < 0 or amount > Decimal("1000000000"):
+        raise ValueError("Money must be finite and between zero and one billion BRL")
     return int((amount * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
 

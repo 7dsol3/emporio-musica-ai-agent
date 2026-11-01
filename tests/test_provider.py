@@ -59,3 +59,27 @@ def test_model_cannot_invent_receipt_date_or_item_condition(settings, monkeypatc
     monkeypatch.setattr(agent.model, "plan", lambda *args: Plan([Call("assess_return", {"channel": "online", "received_date": "2026-10-30", "condition": "unused"})], mode="openai_compatible"))
     result = agent.turn("I want to return my online purchase", today=date(2026, 10, 31))
     assert result["results"][0]["status"] == "needs_information"
+
+
+def test_model_cannot_repeat_catalog_instead_of_selected_product(settings, monkeypatch):
+    from emporio.planner import Call, Plan
+    configured = replace(settings, provider="openai_compatible", model="stub", model_url="http://127.0.0.1:1/v1/chat/completions")
+    agent = AgentService(configured)
+    session = agent.store.session()
+    session["context"]["last_products"] = [83, 85, 89]
+    agent.store.save_session(session)
+    monkeypatch.setattr(agent.model, "plan", lambda *args: Plan([Call("search_products", {"query": "acoustic guitar", "category_id": 5})], mode="openai_compatible"))
+    result = agent.turn("Tell me about the first one", session["id"])
+    assert result["mode"] == "local_fallback"
+    assert result["results"][0]["products"][0]["id"] == 83
+    assert len(result["results"][0]["products"]) == 1
+
+
+def test_model_cannot_drop_requested_opening_hours(settings, monkeypatch):
+    from emporio.planner import Call, Plan
+    configured = replace(settings, provider="openai_compatible", model="stub", model_url="http://127.0.0.1:1/v1/chat/completions")
+    agent = AgentService(configured)
+    monkeypatch.setattr(agent.model, "plan", lambda *args: Plan([Call("search_policies", {"query": "store address", "topic": "about"})], mode="openai_compatible"))
+    result = agent.turn("What are the address and opening hours of the store?")
+    assert result["mode"] == "local_fallback"
+    assert "09:00-18:00" in result["message"] and "Rua 14 de Maio" in result["message"]

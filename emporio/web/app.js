@@ -3,7 +3,7 @@ const $ = (selector) => document.querySelector(selector);
 const language = window.EmporioLanguage;
 const t = (key) => language.text(key);
 const node = (tag, cls, text) => { const element = document.createElement(tag); if (cls) element.className = cls; if (text !== undefined) element.textContent = text; return element; };
-let conversation = [], busy = false, currentView = "chat";
+let conversation = [], busy = false, currentView = "chat", latestMode = "local";
 
 async function api(path, options = {}) {
   const response = await fetch(path, { credentials: "same-origin", ...options, headers: { "Content-Type": "application/json", ...(options.headers || {}) } });
@@ -56,7 +56,8 @@ async function send(text) {
     $("#latest-sources").replaceChildren();
     if (result.sources.length) result.sources.forEach(source => $("#latest-sources").append(sourceLink(source, "source-ref")));
     else $("#latest-sources").append(node("p", "muted small", t("noFacts")));
-    $("#latest-mode").textContent = t(result.mode === "openai_compatible" ? "model" : result.mode === "local_fallback" ? "fallback" : "local");
+    latestMode = result.mode === "openai_compatible" ? "model" : result.mode === "local_fallback" ? "fallback" : "local";
+    $("#latest-mode").textContent = t(latestMode);
   } catch (error) {
     typing.remove(); $("#chat-error").textContent = error.message; $("#chat-error").hidden = false;
     $("#message-input").value = text;
@@ -131,10 +132,11 @@ async function initialize() {
   try {
     const [health, session] = await Promise.all([api("/api/health"), api("/api/session")]);
     $("#connection-label").textContent = t("ready"); $("#product-count").textContent = health.counts.products;
-    if (health.provider !== "local") $("#latest-mode").textContent = t("configured");
+    latestMode = health.provider !== "local" ? "configured" : "local";
+    $("#latest-mode").textContent = t(latestMode);
     conversation = session.history; conversation.forEach(m => appendMessage(m.role, m.content)); setVerified(session.verified);
   } catch (error) { $("#connection-label").textContent = t("offline"); $("#chat-error").textContent = error.message; $("#chat-error").hidden = false; }
 }
-$("#language-select").addEventListener("change", (event) => { language.set(event.target.value); setVerified(verified); $("#connection-label").textContent = t("ready"); $("#latest-mode").textContent = t("local"); if (currentView === "catalog") loadCatalog(); if (currentView === "policies") loadPolicies(); });
+$("#language-select").addEventListener("change", (event) => { language.set(event.target.value); setVerified(verified); $("#connection-label").textContent = t("ready"); $("#latest-mode").textContent = t(latestMode); if (currentView === "catalog") loadCatalog(); if (currentView === "policies") loadPolicies(); });
 language.apply();
 initialize();

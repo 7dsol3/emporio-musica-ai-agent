@@ -30,7 +30,7 @@ class GetProduct(Arguments):
 
 class SearchPolicies(Arguments):
     query: str = Field(min_length=1, max_length=300)
-    topic: str | None = Field(default=None, max_length=30)
+    topic: Literal["about", "hours", "payments", "returns", "delivery", "promotions", "warranty", "privacy", "handoff"] | None = None
 
 
 class GetOrder(Arguments):
