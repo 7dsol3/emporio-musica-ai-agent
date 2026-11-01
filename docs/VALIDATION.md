@@ -6,7 +6,7 @@ Observed locally on Windows x64, Python 3.12.10:
 
 ```text
 python -m pytest
-49 passed, 1 warning in 34.42s
+50 passed, 1 warning in 34.41s
 
 python -m compileall -q emporio scripts
 exit code 0
@@ -41,15 +41,15 @@ and asserted their important outcomes. The final report is
 | --- | --- |
 | Stateful scenarios | 5 |
 | Customer turns | 13 |
-| Accepted model-selected plans | 9 |
-| Model attempts resolved through the explicit local fallback | 2 |
+| Accepted model-selected plans | 8 |
+| Model attempts resolved through the explicit local fallback | 3 |
 | Scope replies handled locally without model inference | 2 |
 | Scenario assertions | PASS |
-| Median model-attempt end-to-end latency | 7,660.7 ms |
-| Model-attempt latency range | 7,232.3-8,563.0 ms |
+| Median model-attempt end-to-end latency | 7,354.1 ms |
+| Model-attempt latency range | 6,763.9-8,621.2 ms |
 
 These are thirteen scripted turns over one supplied dataset, not an estimate
-of general language-model accuracy. The two fallbacks are visible in the
+of general language-model accuracy. The three fallbacks are visible in the
 conversation receipts; they are not counted as successful neural plans.
 
 The checked outcomes include a BRL 1,000 acoustic-guitar filter, resolving the
@@ -80,7 +80,8 @@ address and hours, and an unrelated/injection request without tool access.
    text topic, `address and opening hours`, which was not a defined card.
    [`evidence/initial-policy-topic.md`](evidence/initial-policy-topic.md) preserves
    that response. Topic arguments are now enumerated, and the execution guard
-   checks that explicit requested topics are retained. The repeated live
+   checks that explicit requested topics are retained without adding an unrelated
+   promotion policy. The repeated live
    conversation includes both the address and opening hours.
 
 The initial aggregate receipts remain at
@@ -112,4 +113,6 @@ not committed; use the checksum-pinned setup helper. The live examples depend on
 the supplied fixture and current store-local date. For the illustrated
 2026-10-27 receipt, the four-day outcome is specific to the case date 2026-10-31;
 automated date-boundary tests freeze that date. A later real demo should use a
-recent actual receipt date to demonstrate the same rule honestly.
+recent actual receipt date to demonstrate the same rule honestly. The capture
+script automatically supplies a simulated receipt four days before its current
+store-local capture date so the demonstration can be recaptured later.

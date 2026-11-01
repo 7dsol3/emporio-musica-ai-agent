@@ -3,22 +3,19 @@
 Captured from the running application. These are observed responses, not manually scripted assistant answers.
 Data fingerprint: `4270a5860500ef3d463a1d95a77dbd44dea5948fe4165586df0f8cae501e2976`
 
-Language: English. Receipt-date example uses the case date, 2026-10-31.
+Language: English. Store-local capture date: 2026-10-31. The return scenario explicitly supplies a simulated receipt four days earlier.
 
 **Customer:** What are the address and opening hours of the store?
 
-**Assistant:** Promotions
-Only promotions marked active in the current supplied system snapshot may be quoted. Discounts do not stack. The 5% PIX discount does not apply to an already promotional price. Show original price, discount percentage and final price together. Offers are subject to available stock; an inactive offer must not be promised. The CSV supplies an active flag but no start or end dates.
+**Assistant:** Store and contact
+Empório da Música sells musical instruments in Campo Grande, MS. Address: Rua 14 de Maio, 3200, Centro, Campo Grande - MS, CEP 79202-333. General telephone: (67) 3341-4444. The manual lists conflicting WhatsApp numbers; ask the team to confirm that channel. Accessories, cables, strings, picks, cases, pedals and amplifiers are outside the catalog.
 
 Opening hours
 The human team is available Monday to Friday, 09:00-18:00, and Saturday, 09:00-13:00, in Campo Grande local time (UTC-04:00). The store is closed on Sundays and public holidays. Special opening hours must be confirmed with the team. The virtual assistant can answer outside those hours.
 
-Store and contact
-Empório da Música sells musical instruments in Campo Grande, MS. Address: Rua 14 de Maio, 3200, Centro, Campo Grande - MS, CEP 79202-333. General telephone: (67) 3341-4444. The manual lists conflicting WhatsApp numbers; ask the team to confirm that channel. Accessories, cables, strings, picks, cases, pedals and amplifiers are outside the catalog.
+Sources: Store policies, p. 1; Store policies, p. 2; Store policies, p. 6
 
-Sources: Store policies, p. 6; Store policies, p. 7; Store policies, p. 2; Store policies, p. 1
-
-Planner: `openai_compatible`. Tool receipts:
+Planner: `local_fallback`. Tool receipts:
 
 ```json
 [
@@ -26,8 +23,8 @@ Planner: `openai_compatible`. Tool receipts:
     "tool": "search_policies",
     "status": "checked",
     "arguments": {
-      "query": "address and opening hours",
-      "topic": "promotions"
+      "query": "What are the address and opening hours of the store?",
+      "topic": null
     }
   }
 ]

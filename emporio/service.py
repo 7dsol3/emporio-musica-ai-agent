@@ -47,7 +47,10 @@ class AgentService:
                         if model_call.name == "search_policies":
                             expected = set(topics_for(text))
                             supplied = set(topics_for(model_call.arguments.get("query", "")))
-                            supplied.add(model_call.arguments.get("topic"))
+                            selected_topic = model_call.arguments.get("topic")
+                            supplied.add(selected_topic)
+                            if expected and selected_topic is not None and selected_topic not in expected:
+                                raise ValueError("Model added an unrelated policy topic")
                             if not expected.issubset(supplied):
                                 raise ValueError("Model dropped an explicit policy topic")
                         if model_call.name == "assess_return":

@@ -333,4 +333,3 @@ The result is written to `output/pdf/`, which is excluded from source control.
 The build requires the recorded live evaluation and browser-check reports to
 be present and successful.
 
-This repository does not submit the form or send recruitment email automatically.

@@ -4,6 +4,7 @@ from __future__ import annotations
 import http.cookiejar
 import json
 import urllib.request
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,13 +24,15 @@ def request(opener, path, body=None):
 
 def main():
     health = request(client(), "/api/health")
+    capture_date = datetime.now(timezone(timedelta(hours=-4))).date()
+    receipt_date = (capture_date - timedelta(days=4)).isoformat()
     scenarios = [
         ("01-catalog-and-installments", "Catalog search and payment follow-up", [
             "Which acoustic guitars are available for up to BRL 1,000?", "Tell me about the first one.", "Can I pay for it in 12 installments?"]),
         ("02-promotional-price", "Active promotion and nonstacking PIX discount", [
             "What is the price and availability of Taylor 110e Dreadnought Natural?", "What would the PIX price be?"]),
         ("03-return-window", "Clarifying actual receipt before applying a return rule", [
-            "I want to return my online purchase.", "I received it on 2026-10-27. It is unused in its original packaging with all accessories and manuals."]),
+            "I want to return my online purchase.", f"I received it on {receipt_date}. It is unused in its original packaging with all accessories and manuals."]),
         ("04-private-order", "Verification and cross-customer access control", [
             "What is the status of order 8?", {"verify": True}, "What is the status of order 8?", "What is the status of order 1?"]),
         ("05-store-and-scope", "Store information and scope boundaries", [
@@ -39,7 +42,7 @@ def main():
     for filename, title, turns in scenarios:
         opener = client()
         lines = [f"# {title}", "", "Captured from the running application. These are observed responses, not manually scripted assistant answers.",
-                 f"Data fingerprint: `{health['data_fingerprint']}`", "", "Language: English. Receipt-date example uses the case date, 2026-10-31.", ""]
+                 f"Data fingerprint: `{health['data_fingerprint']}`", "", f"Language: English. Store-local capture date: {capture_date}. The return scenario explicitly supplies a simulated receipt four days earlier.", ""]
         receipts, observed = [], []
         for turn in turns:
             if isinstance(turn, dict):

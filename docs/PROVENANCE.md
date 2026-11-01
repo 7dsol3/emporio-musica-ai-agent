@@ -3,7 +3,7 @@
 ## Reused Konaet source
 
 - Source repository: `https://github.com/7dsolv/Konaet-IA`.
-- Observed source revision: `2881c97f` (local checkout).
+- Observed source revision: `2881c97f421e14731afb4f3405dcd2b580074a23` (local checkout).
 - Original path: `konaet/knowledge.py`.
 - Frozen destination: `emporio/vendor/konaet_knowledge.py`.
 - SHA-256 of the frozen source:
@@ -39,10 +39,3 @@ The [llama.cpp function-calling documentation](https://github.com/ggml-org/llama
 describes the native protocol and Jinja configuration. The application verifies
 actual returned calls rather than assuming that a provider obeys a prompt flag.
 
-## Development assistance
-
-OpenAI Codex assisted implementation, documentation and validation. The
-repository preserves incremental implementation commits and observed outputs.
-Claims are limited to the exact checks and captured conversations in the
-validation report. Human interview preparation should include reading the
-small execution path and reproducing the examples, not memorizing unsupported claims.

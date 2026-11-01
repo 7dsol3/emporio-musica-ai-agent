@@ -83,3 +83,13 @@ def test_model_cannot_drop_requested_opening_hours(settings, monkeypatch):
     result = agent.turn("What are the address and opening hours of the store?")
     assert result["mode"] == "local_fallback"
     assert "09:00-18:00" in result["message"] and "Rua 14 de Maio" in result["message"]
+
+
+def test_model_cannot_add_an_unrequested_promotion_policy(settings, monkeypatch):
+    from emporio.planner import Call, Plan
+    configured = replace(settings, provider="openai_compatible", model="stub", model_url="http://127.0.0.1:1/v1/chat/completions")
+    agent = AgentService(configured)
+    monkeypatch.setattr(agent.model, "plan", lambda *args: Plan([Call("search_policies", {"query": "address and opening hours", "topic": "promotions"})], mode="openai_compatible"))
+    result = agent.turn("What are the address and opening hours of the store?")
+    assert result["mode"] == "local_fallback"
+    assert "Promotions" not in result["message"] and "09:00-18:00" in result["message"]

@@ -17,7 +17,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import (Image, KeepTogether, PageBreak, Paragraph,
+from reportlab.platypus import (CondPageBreak, Image, PageBreak, Paragraph,
                                SimpleDocTemplate, Spacer, Table, TableStyle)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -59,7 +59,7 @@ def styles():
         pdfmetrics.registerFont(TTFont(name, fonts / filename))
     pdfmetrics.registerFontFamily("Body", normal="Body", bold="Body-Bold", italic="Body-Italic", boldItalic="Body-Bold")
     s = getSampleStyleSheet()
-    s.add(ParagraphStyle(name="Text", fontName="Body", fontSize=9.1, leading=14, textColor=INK, spaceAfter=8, splitLongWords=True))
+    s.add(ParagraphStyle(name="Text", fontName="Body", fontSize=9.1, leading=13.1, textColor=INK, spaceAfter=7, splitLongWords=True))
     s.add(ParagraphStyle(name="H1x", parent=s["Text"], fontName="Body-Bold", fontSize=19, leading=24, spaceBefore=14, spaceAfter=13, keepWithNext=True))
     s.add(ParagraphStyle(name="H2x", parent=s["Text"], fontName="Body-Bold", fontSize=12, leading=17, spaceBefore=13, spaceAfter=8, keepWithNext=True))
     s.add(ParagraphStyle(name="H3x", parent=s["Text"], fontName="Body-Bold", fontSize=10.1, leading=15, spaceBefore=10, spaceAfter=6, keepWithNext=True))
@@ -129,7 +129,12 @@ def markdown(path: Path, s) -> list:
         elif line.startswith("#"):
             flush()
             level = len(line)-len(line.lstrip("#"))
-            result.append(Paragraph(inline(line.lstrip("# "), path), s["H1x" if level == 1 else "H2x" if level == 2 else "H3x"]))
+            style = s["H1x" if level == 1 else "H2x" if level == 2 else "H3x"]
+            following = next((v.strip() for v in lines[index+1:] if v.strip()), "")
+            if following.startswith("|"):
+                result.append(CondPageBreak(120))
+                style = ParagraphStyle(name="TableHeading", parent=style, keepWithNext=False)
+            result.append(Paragraph(inline(line.lstrip("# "), path), style))
         elif re.match(r"^(?:[-*•]|\d+\.)\s", line):
             flush()
             marker, content = re.match(r"^([-*•]|\d+\.)\s+(.*)$", line).groups()
@@ -175,14 +180,14 @@ def main():
     story = [Spacer(1, 45), Paragraph("ARTEFACT / AI ENGINEER TECHNICAL CASE", s["Smallx"]), Spacer(1, 25),
              Paragraph("Empório da Música<br/><font color='#b7754d'>Evidence before answers.</font>", s["CoverTitlex"]),
              Paragraph("A bilingual customer service agent with Python tools, local function calling, policy retrieval and verified order access.", s["H2x"]),
-             Spacer(1, 25), Paragraph("Prepared for Adilson Oliveira", s["H2x"]),
+             Spacer(1, 25), Paragraph("Candidate: Adilson Oliveira", s["H2x"]),
              Paragraph("AI Engineer - Full-Stack for Generative AI Applications", s["Text"]),
              Paragraph("English technical submission | Case date: 31 October 2026", s["Smallx"]),
              Spacer(1, 28), Paragraph(f'<link href="{REPO}" color="#47735c"><u>{REPO}</u></link>', s["Text"]),
              Paragraph("Source revision: " + revision, s["Smallx"]),
              Spacer(1, 24), Paragraph("Included in this document", s["H2x"]),
              Paragraph("README and execution instructions; architecture; data and policy decisions; validation evidence; component/model provenance; attribution; five observed English conversations.", s["Text"]),
-             Paragraph("The public repository contains source, incremental commits, full tool receipts and an optional interview preparation guide. This PDF is generated from its project documentation. No form submission or recruitment email is performed by the project.", s["Smallx"])]
+             Paragraph("The public repository contains source, incremental commits, full tool receipts and an interview preparation guide. This PDF is generated from its project documentation.", s["Smallx"])]
     sources = [ROOT / "README.md", ROOT / "docs" / "ARCHITECTURE.md", ROOT / "docs" / "DATA_DECISIONS.md",
                ROOT / "docs" / "VALIDATION.md", ROOT / "docs" / "PROVENANCE.md", ROOT / "THIRD_PARTY_NOTICES.md",
                *sorted((ROOT / "examples").glob("*.md"))]

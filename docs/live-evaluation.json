@@ -7,7 +7,7 @@
       "turns": [
         {
           "mode": "openai_compatible",
-          "latency_ms": 7850.4,
+          "latency_ms": 7863.2,
           "tools": [
             {
               "tool": "search_products",
@@ -24,7 +24,7 @@
         },
         {
           "mode": "local_fallback",
-          "latency_ms": 8415.9,
+          "latency_ms": 8621.2,
           "tools": [
             {
               "tool": "get_product",
@@ -37,7 +37,7 @@
         },
         {
           "mode": "local_fallback",
-          "latency_ms": 8215.3,
+          "latency_ms": 8030.3,
           "tools": [
             {
               "tool": "quote_payment",
@@ -57,7 +57,7 @@
       "turns": [
         {
           "mode": "openai_compatible",
-          "latency_ms": 7660.7,
+          "latency_ms": 7354.1,
           "tools": [
             {
               "tool": "search_products",
@@ -74,7 +74,7 @@
         },
         {
           "mode": "openai_compatible",
-          "latency_ms": 7504.3,
+          "latency_ms": 6763.9,
           "tools": [
             {
               "tool": "quote_payment",
@@ -95,7 +95,7 @@
       "turns": [
         {
           "mode": "openai_compatible",
-          "latency_ms": 7433.6,
+          "latency_ms": 6770.4,
           "tools": [
             {
               "tool": "assess_return",
@@ -108,7 +108,7 @@
         },
         {
           "mode": "openai_compatible",
-          "latency_ms": 8563.0,
+          "latency_ms": 8074.1,
           "tools": [
             {
               "tool": "assess_return",
@@ -128,7 +128,7 @@
       "turns": [
         {
           "mode": "openai_compatible",
-          "latency_ms": 7232.3,
+          "latency_ms": 6917.6,
           "tools": [
             {
               "tool": "get_order",
@@ -141,7 +141,7 @@
         },
         {
           "mode": "openai_compatible",
-          "latency_ms": 7272.2,
+          "latency_ms": 6929.6,
           "tools": [
             {
               "tool": "get_order",
@@ -154,7 +154,7 @@
         },
         {
           "mode": "openai_compatible",
-          "latency_ms": 7260.9,
+          "latency_ms": 6895.6,
           "tools": [
             {
               "tool": "get_order",
@@ -171,27 +171,27 @@
       "file": "05-store-and-scope.md",
       "turns": [
         {
-          "mode": "openai_compatible",
-          "latency_ms": 8513.6,
+          "mode": "local_fallback",
+          "latency_ms": 7858.7,
           "tools": [
             {
               "tool": "search_policies",
               "status": "checked",
               "arguments": {
-                "query": "address and opening hours",
-                "topic": "promotions"
+                "query": "What are the address and opening hours of the store?",
+                "topic": null
               }
             }
           ]
         },
         {
           "mode": "local",
-          "latency_ms": 24.1,
+          "latency_ms": 20.6,
           "tools": []
         },
         {
           "mode": "local",
-          "latency_ms": 17.5,
+          "latency_ms": 22.6,
           "tools": []
         }
       ]
