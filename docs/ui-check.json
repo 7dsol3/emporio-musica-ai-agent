@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "desktop": "1440x1000",
+  "mobile": "375x812",
+  "javascript_errors": [],
+  "checks": [
+    "initial readiness",
+    "catalog-grounded chat",
+    "catalog view",
+    "policy view",
+    "order verification",
+    "verified order status",
+    "session reset",
+    "no horizontal overflow",
+    "mobile new conversation",
+    "Portuguese interface and answer"
+  ]
+}

@@ -1,0 +1,206 @@
+{
+  "configured_provider": "openai_compatible",
+  "data_fingerprint": "4270a5860500ef3d463a1d95a77dbd44dea5948fe4165586df0f8cae501e2976",
+  "scenarios": [
+    {
+      "file": "01-catalog-and-installments.md",
+      "turns": [
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 7572.1,
+          "tools": [
+            {
+              "tool": "search_products",
+              "status": "checked",
+              "arguments": {
+                "query": "acoustic guitar",
+                "category_id": 5,
+                "max_price_brl": "1000",
+                "available_only": true,
+                "limit": 5
+              }
+            }
+          ]
+        },
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 8541.9,
+          "tools": [
+            {
+              "tool": "search_products",
+              "status": "checked",
+              "arguments": {
+                "query": "acoustic guitar",
+                "category_id": 5,
+                "max_price_brl": "1000",
+                "available_only": true,
+                "limit": 5
+              }
+            }
+          ]
+        },
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 8276.8,
+          "tools": [
+            {
+              "tool": "search_products",
+              "status": "checked",
+              "arguments": {
+                "query": "acoustic guitar",
+                "category_id": 5,
+                "max_price_brl": "1000",
+                "available_only": true,
+                "limit": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "02-promotional-price.md",
+      "turns": [
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 9366.7,
+          "tools": [
+            {
+              "tool": "search_products",
+              "status": "checked",
+              "arguments": {
+                "query": "Taylor 110e Dreadnought Natural",
+                "category_id": 5,
+                "max_price_brl": null,
+                "available_only": true,
+                "limit": 5
+              }
+            }
+          ]
+        },
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 8048.0,
+          "tools": [
+            {
+              "tool": "quote_payment",
+              "status": "quoted",
+              "arguments": {
+                "product_id": 94,
+                "method": "pix",
+                "installments": 1,
+                "quantity": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "03-return-window.md",
+      "turns": [
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 6719.1,
+          "tools": [
+            {
+              "tool": "assess_return",
+              "status": "needs_information",
+              "arguments": {
+                "channel": "online"
+              }
+            }
+          ]
+        },
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 7262.1,
+          "tools": [
+            {
+              "tool": "assess_return",
+              "status": "within_policy_window",
+              "arguments": {
+                "channel": "online",
+                "received_date": "2026-10-27",
+                "condition": "unused"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "04-private-order.md",
+      "turns": [
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 6662.6,
+          "tools": [
+            {
+              "tool": "get_order",
+              "status": "verification_required",
+              "arguments": {
+                "order_id": 8
+              }
+            }
+          ]
+        },
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 6973.2,
+          "tools": [
+            {
+              "tool": "get_order",
+              "status": "found",
+              "arguments": {
+                "order_id": 8
+              }
+            }
+          ]
+        },
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 7286.3,
+          "tools": [
+            {
+              "tool": "get_order",
+              "status": "unavailable",
+              "arguments": {
+                "order_id": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "05-store-and-scope.md",
+      "turns": [
+        {
+          "mode": "openai_compatible",
+          "latency_ms": 8216.6,
+          "tools": [
+            {
+              "tool": "search_policies",
+              "status": "checked",
+              "arguments": {
+                "query": "Emp\u00f3rio da M\u00fasica",
+                "topic": "address and opening hours"
+              }
+            }
+          ]
+        },
+        {
+          "mode": "local",
+          "latency_ms": 19.9,
+          "tools": []
+        },
+        {
+          "mode": "local",
+          "latency_ms": 14.3,
+          "tools": []
+        }
+      ]
+    }
+  ]
+}
