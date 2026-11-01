@@ -59,7 +59,7 @@ def styles():
         pdfmetrics.registerFont(TTFont(name, fonts / filename))
     pdfmetrics.registerFontFamily("Body", normal="Body", bold="Body-Bold", italic="Body-Italic", boldItalic="Body-Bold")
     s = getSampleStyleSheet()
-    s.add(ParagraphStyle(name="Text", fontName="Body", fontSize=9.1, leading=13.1, textColor=INK, spaceAfter=7, splitLongWords=True))
+    s.add(ParagraphStyle(name="Text", fontName="Body", fontSize=9.1, leading=13.1, textColor=INK, spaceAfter=5, splitLongWords=True))
     s.add(ParagraphStyle(name="H1x", parent=s["Text"], fontName="Body-Bold", fontSize=19, leading=24, spaceBefore=14, spaceAfter=13, keepWithNext=True))
     s.add(ParagraphStyle(name="H2x", parent=s["Text"], fontName="Body-Bold", fontSize=12, leading=17, spaceBefore=13, spaceAfter=8, keepWithNext=True))
     s.add(ParagraphStyle(name="H3x", parent=s["Text"], fontName="Body-Bold", fontSize=10.1, leading=15, spaceBefore=10, spaceAfter=6, keepWithNext=True))
@@ -115,8 +115,8 @@ def markdown(path: Path, s) -> list:
             table = Table(rows, colWidths=widths, repeatRows=1, hAlign="LEFT")
             table.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#eaf0e5")),
                 ("VALIGN", (0, 0), (-1, -1), "TOP"), ("LEFTPADDING", (0, 0), (-1, -1), 8),
-                ("RIGHTPADDING", (0, 0), (-1, -1), 8), ("TOPPADDING", (0, 0), (-1, -1), 8),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 8), ("LINEBELOW", (0, 0), (-1, -1), .4, LINE)]))
+                ("RIGHTPADDING", (0, 0), (-1, -1), 8), ("TOPPADDING", (0, 0), (-1, -1), 7),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 7), ("LINEBELOW", (0, 0), (-1, -1), .4, LINE)]))
             result.extend([table, Spacer(1, 12)])
         elif line.startswith("!["):
             flush()
